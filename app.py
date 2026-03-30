@@ -6,11 +6,8 @@ from pymongo import MongoClient
 # Konfigurasi Halaman Streamlit
 st.set_page_config(page_title="Beaumont Hospital Dashboard", layout="wide")
 
-# Hapus baris yang lama:
-# MONGO_URI = "mongodb+srv://user:password@cluster..." 
-
 # GANTI menjadi baris sakti ini:
-MONGO_URI = st.secrets["mongodb+srv://wildanwilhamdi:wildanwilhamdi11@cluster0.mongodb.net/?retryWrites=true&w=majority"]
+MONGO_URI = st.secrets["MONGO_URI"]
 
 # Inisialisasi Koneksi MongoDB (Di-cache agar tidak reconnect terus-menerus)
 @st.cache_resource
