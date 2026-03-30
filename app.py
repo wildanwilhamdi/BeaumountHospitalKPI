@@ -83,10 +83,53 @@ if not st.session_state['logged_in']:
 # HALAMAN UTAMA DASHBOARD (JIKA SUDAH LOGIN)
 # ==========================================
 else:
-    # Sidebar untuk Profil & Logout
+    # ==========================================
+    # SIDEBAR PANEL INFORMASI
+    # ==========================================
     st.sidebar.markdown(f"### 👤 Welcome, **{st.session_state['username']}**")
-    st.sidebar.markdown("---")
     st.sidebar.button("🚪 Logout", on_click=logout, use_container_width=True)
+    st.sidebar.markdown("---")
+
+    # 1. Info Sistem & Logo (Menggunakan Emoji sebagai ilustrasi ringan)
+    st.sidebar.markdown("### 🏥 System Overview")
+    st.sidebar.info(
+        "**Beaumont KPI Portal**\n\n"
+        "Executive decision-support system for monitoring clinical and operational metrics."
+    )
+
+    # 2. Standar Medis & Keamanan
+    st.sidebar.markdown("### 🛡️ Security & Compliance")
+    st.sidebar.success(
+        "✅ **GDPR & HSE Aligned**\n\nData anonymization & aggregation applied.\n\n"
+        "✅ **HIPAA Benchmark**\n\nRole-Based Access Control (RBAC) & Encryption at Rest active."
+    )
+
+    # 3. Tech Stack (Bahan pamer ke dosen)
+    st.sidebar.markdown("### 💻 Architecture Stack")
+    st.sidebar.markdown(
+        "- **Engine**: Python 3 & Streamlit\n"
+        "- **Database**: MongoDB Atlas (Cloud NoSQL)\n"
+        "- **Visualization**: Plotly Interactive\n"
+        "- **Auth**: Werkzeug Hashing"
+    )
+
+    st.sidebar.markdown("---")
+
+    # 4. Panduan Membaca Dashboard (Bisa di-klik / Expandable)
+    st.sidebar.markdown("### 📖 Dashboard Guide")
+    
+    with st.sidebar.expander("📊 How to read the Metrics (Cards)"):
+        st.markdown(
+            "**Value**: Nilai aktual KPI pada periode pelaporan terakhir.\n\n"
+            "**Target**: Ambang batas performa yang ditetapkan. (Teks merah menandakan perlu perhatian).\n\n"
+            "**YTD (Year-to-Date)**: Akumulasi atau rata-rata nilai dari awal tahun hingga saat ini."
+        )
+        
+    with st.sidebar.expander("📈 How to read the Charts"):
+        st.markdown(
+            "**Bar Chart (Comparison)**: Membandingkan performa Beaumont melawan rata-rata Nasional.\n\n"
+            "**Line Chart (Trend)**: Melacak fluktuasi historis. Garis putus-putus merah horizontal pada kedua grafik menunjukkan **Garis Target** sebagai *benchmark* evaluasi."
+        )
 
     # --- METADATA STATIS (Kamus Informasi KPI) ---
     kpi_meta = {
