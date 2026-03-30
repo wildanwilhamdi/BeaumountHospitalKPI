@@ -4,8 +4,40 @@ import plotly.graph_objects as go
 from pymongo import MongoClient
 from werkzeug.security import generate_password_hash, check_password_hash
 
+# ==========================================
+# LOGO SVG (inline, tidak butuh file gambar)
+# ==========================================
+LOGO_SVG = """
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 60">
+  <!-- Background pill -->
+  <rect x="0" y="5" width="195" height="50" rx="10" fill="#0f2b3d"/>
+  <!-- Cross icon -->
+  <rect x="12" y="20" width="6" height="22" rx="2" fill="#20c997"/>
+  <rect x="6" y="26" width="18" height="6" rx="2" fill="#20c997"/>
+  <!-- Hospital name -->
+  <text x="38" y="27" font-family="Georgia, serif" font-size="13" font-weight="bold" fill="#ffffff">BEAUMONT</text>
+  <text x="38" y="44" font-family="Georgia, serif" font-size="10" fill="#20c997" letter-spacing="3">HOSPITAL</text>
+  <!-- Decorative line -->
+  <line x1="38" y1="30" x2="185" y2="30" stroke="#20c997" stroke-width="0.5" opacity="0.3"/>
+</svg>
+"""
+
+LOGO_SVG_SMALL = """
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 160 45">
+  <rect x="0" y="2" width="158" height="40" rx="8" fill="#0f2b3d"/>
+  <rect x="10" y="12" width="5" height="18" rx="1.5" fill="#20c997"/>
+  <rect x="5" y="17" width="15" height="5" rx="1.5" fill="#20c997"/>
+  <text x="28" y="21" font-family="Georgia, serif" font-size="11" font-weight="bold" fill="#ffffff">BEAUMONT</text>
+  <text x="28" y="35" font-family="Georgia, serif" font-size="8.5" fill="#20c997" letter-spacing="2.5">HOSPITAL</text>
+</svg>
+"""
+
 # Konfigurasi Halaman Streamlit
-st.set_page_config(page_title="Beaumont Hospital Portal", layout="wide")
+st.set_page_config(
+    page_title="Beaumont Hospital Portal",
+    page_icon="🏥",
+    layout="wide"
+)
 
 # --- KONEKSI DATABASE ---
 MONGO_URI = st.secrets["MONGO_URI"]
@@ -18,9 +50,9 @@ def init_db_connection():
 client = init_db_connection()
 db = client["beaumont_db"]
 collection_kpi = db["kpi_trends"]
-collection_users = db["users"] # Koleksi baru untuk menyimpan data akun
+collection_users = db["users"]
 
-# --- SISTEM AUTENTIKASI (SESSION STATE) ---
+# --- SISTEM AUTENTIKASI ---
 if 'logged_in' not in st.session_state:
     st.session_state['logged_in'] = False
     st.session_state['username'] = ''
@@ -33,7 +65,7 @@ def login_user(username, password):
 
 def create_user(username, password):
     if collection_users.find_one({"username": username}):
-        return False # Username sudah dipakai
+        return False
     hashed_password = generate_password_hash(password)
     collection_users.insert_one({"username": username, "password": hashed_password})
     return True
@@ -48,11 +80,24 @@ def logout():
 if not st.session_state['logged_in']:
     col1, col2, col3 = st.columns([1, 2, 1])
     with col2:
-        st.markdown("<h1 style='text-align: center; color: #20c997;'>Beaumont Hospital Portal</h1>", unsafe_allow_html=True)
-        st.markdown("<p style='text-align: center; color: gray;'>Secure Executive Access Only. Please verify your identity.</p>", unsafe_allow_html=True)
-        
+        # === LOGO DI LOGIN PAGE ===
+        st.markdown(
+            f"""
+            <div style="display:flex; justify-content:center; margin-bottom: 8px; margin-top: 20px;">
+                {LOGO_SVG}
+            </div>
+            """,
+            unsafe_allow_html=True
+        )
+
+        # Alternatif: Jika kamu punya file gambar logo (taruh di folder 'assets/')
+        # st.image("assets/logo.png", use_column_width=True)
+
+        st.markdown("<p style='text-align: center; color: gray; margin-top: 4px;'>Secure Executive Access Only. Please verify your identity.</p>", unsafe_allow_html=True)
+        st.markdown("<br>", unsafe_allow_html=True)
+
         tab1, tab2 = st.tabs(["🔒 Login", "📝 Sign Up"])
-        
+
         with tab1:
             st.subheader("Login to Dashboard")
             login_username = st.text_input("Username", key="log_user")
@@ -61,7 +106,7 @@ if not st.session_state['logged_in']:
                 if login_user(login_username, login_password):
                     st.session_state['logged_in'] = True
                     st.session_state['username'] = login_username
-                    st.rerun() # Refresh halaman untuk masuk ke dashboard
+                    st.rerun()
                 else:
                     st.error("Invalid Username or Password!")
 
@@ -80,31 +125,42 @@ if not st.session_state['logged_in']:
 
 
 # ==========================================
-# HALAMAN UTAMA DASHBOARD (JIKA SUDAH LOGIN)
+# HALAMAN UTAMA DASHBOARD
 # ==========================================
 else:
     # ==========================================
-    # SIDEBAR PANEL INFORMASI
+    # SIDEBAR
     # ==========================================
+
+    # === LOGO DI SIDEBAR ===
+    st.sidebar.markdown(
+        f"""
+        <div style="margin-bottom: 12px;">
+            {LOGO_SVG_SMALL}
+        </div>
+        """,
+        unsafe_allow_html=True
+    )
+
+    # Alternatif: Jika pakai file gambar
+    # st.sidebar.image("assets/logo.png", use_column_width=True)
+
     st.sidebar.markdown(f"### 👤 Welcome, **{st.session_state['username']}**")
     st.sidebar.button("🚪 Logout", on_click=logout, use_container_width=True)
     st.sidebar.markdown("---")
 
-    # 1. Info Sistem & Logo (Menggunakan Emoji sebagai ilustrasi ringan)
     st.sidebar.markdown("### 🏥 System Overview")
     st.sidebar.info(
         "**Beaumont KPI Portal**\n\n"
         "Executive decision-support system for monitoring clinical and operational metrics."
     )
 
-    # 2. Standar Medis & Keamanan
     st.sidebar.markdown("### 🛡️ Security & Compliance")
     st.sidebar.success(
         "✅ **GDPR & HSE Aligned**\n\nData anonymization & aggregation applied.\n\n"
         "✅ **HIPAA Benchmark**\n\nRole-Based Access Control (RBAC) & Encryption at Rest active."
     )
 
-    # 3. Tech Stack (Bahan pamer ke dosen)
     st.sidebar.markdown("### 💻 Architecture Stack")
     st.sidebar.markdown(
         "- **Engine**: Python 3 & Streamlit\n"
@@ -115,23 +171,22 @@ else:
 
     st.sidebar.markdown("---")
 
-    # 4. Panduan Membaca Dashboard (Bisa di-klik / Expandable)
     st.sidebar.markdown("### 📖 Dashboard Guide")
-    
+
     with st.sidebar.expander("📊 How to read the Metrics (Cards)"):
         st.markdown(
             "**Value**: Actual KPI value in the last reporting period.\n\n"
             "**Target**: The performance threshold has been set. (Red text indicates attention is needed).\n\n"
             "**YTD (Year-to-Date)**: Accumulation or average value from the beginning of the year until now."
         )
-        
+
     with st.sidebar.expander("📈 How to read the Charts"):
         st.markdown(
             "**Bar Chart (Comparison)**: Comparing Beaumont's performance against the national average.\n\n"
             "**Line Chart (Trend)**: Tracking historical fluctuations. The horizontal red dashed line on both charts indicates the **Target Line** as an evaluation *benchmark*."
         )
 
-    # --- METADATA STATIS (Kamus Informasi KPI) ---
+    # --- METADATA STATIS ---
     kpi_meta = {
         "elective_los": {"name": "Elective length of stay", "unit": "Days", "cards": {"value": "5.1", "target_text": "≤ 4.5", "target_num": 4.5, "frequency": "M-1M", "ytd": "5.2"}, "comparison": {"hospital": 5.1, "national": 4.8}},
         "avg_los_inpatient": {"name": "Average length of stay - inpatient discharges", "unit": "Days", "cards": {"value": "7.9", "target_text": "≤ 4.8", "target_num": 4.8, "frequency": "M-1M", "ytd": "8.3"}, "comparison": {"hospital": 7.9, "national": 5.0}},
@@ -151,8 +206,24 @@ else:
         </style>
     """, unsafe_allow_html=True)
 
-    st.markdown("<h1 style='color: #20c997;'>Beaumont Hospital Executive Dashboard</h1>", unsafe_allow_html=True)
-    st.markdown("This dashboard presents a detailed analysis of operational and clinical Key Performance Indicators (KPIs).")
+    # === HEADER DASHBOARD DENGAN LOGO ===
+    header_col1, header_col2 = st.columns([3, 1])
+    with header_col1:
+        st.markdown("<h1 style='color: #20c997;'>Beaumont Hospital Executive Dashboard</h1>", unsafe_allow_html=True)
+        st.markdown("This dashboard presents a detailed analysis of operational and clinical Key Performance Indicators (KPIs).")
+    with header_col2:
+        # Logo di pojok kanan header
+        st.markdown(
+            f"""
+            <div style="display:flex; justify-content:flex-end; align-items:center; height:100%; padding-top:16px;">
+                {LOGO_SVG}
+            </div>
+            """,
+            unsafe_allow_html=True
+        )
+
+        # Alternatif: Jika pakai file gambar
+        # st.image("assets/logo.png", width=180)
 
     st.markdown("### Controls")
     col_ctrl1, col_ctrl2 = st.columns([1, 1])
@@ -182,7 +253,7 @@ else:
             st.markdown(f"<div class='kpi-box' style='border-color: #3498db;'><div class='kpi-title'>Value</div><div class='kpi-value val-red'>{meta['cards']['value']}</div></div>", unsafe_allow_html=True)
         with c2:
             st.markdown(f"<div class='kpi-box' style='border-color: #95a5a6;'><div class='kpi-title'>Target</div><div class='kpi-value'>{meta['cards']['target_text']}</div></div>", unsafe_allow_html=True)
-        
+
         c3, c4 = st.columns(2)
         with c3:
             st.markdown(f"<div class='kpi-box' style='border-color: #17a2b8;'><div class='kpi-title'>Frequency</div><div class='kpi-value'>{meta['cards']['frequency']}</div></div>", unsafe_allow_html=True)
@@ -192,7 +263,7 @@ else:
         st.markdown(f"**Current KPI value comparison National versus Hospital in {meta['unit']}**")
         fig_comp = go.Figure()
         fig_comp.add_trace(go.Bar(
-            y=['National', 'Beaumont Hospital'], 
+            y=['National', 'Beaumont Hospital'],
             x=[meta['comparison']['national'], meta['comparison']['hospital']],
             orientation='h',
             marker=dict(color=['#95a5a6', '#3498db'])
@@ -204,11 +275,11 @@ else:
     with col_right:
         year_label = "2024 & 2025" if selected_year == "all" else f"20{selected_year}"
         st.markdown(f"**KPI Value Trend in {meta['unit']} ({year_label})**")
-        
+
         if not df_trend.empty:
             fig_trend = go.Figure()
             fig_trend.add_trace(go.Scatter(
-                x=df_trend['date'], y=df_trend['val'], 
+                x=df_trend['date'], y=df_trend['val'],
                 mode='lines+markers',
                 line=dict(color='#3498db', width=3),
                 fill='tozeroy', fillcolor='rgba(52, 152, 219, 0.2)'
