@@ -120,15 +120,15 @@ else:
     
     with st.sidebar.expander("📊 How to read the Metrics (Cards)"):
         st.markdown(
-            "**Value**: Nilai aktual KPI pada periode pelaporan terakhir.\n\n"
-            "**Target**: Ambang batas performa yang ditetapkan. (Teks merah menandakan perlu perhatian).\n\n"
-            "**YTD (Year-to-Date)**: Akumulasi atau rata-rata nilai dari awal tahun hingga saat ini."
+            "**Value**: Actual KPI value in the last reporting period.\n\n"
+            "**Target**: The performance threshold has been set. (Red text indicates attention is needed).\n\n"
+            "**YTD (Year-to-Date)**: Accumulation or average value from the beginning of the year until now."
         )
         
     with st.sidebar.expander("📈 How to read the Charts"):
         st.markdown(
-            "**Bar Chart (Comparison)**: Membandingkan performa Beaumont melawan rata-rata Nasional.\n\n"
-            "**Line Chart (Trend)**: Melacak fluktuasi historis. Garis putus-putus merah horizontal pada kedua grafik menunjukkan **Garis Target** sebagai *benchmark* evaluasi."
+            "**Bar Chart (Comparison)**: Comparing Beaumont's performance against the national average.\n\n"
+            "**Line Chart (Trend)**: Tracking historical fluctuations. The horizontal red dashed line on both charts indicates the **Target Line** as an evaluation *benchmark*."
         )
 
     # --- METADATA STATIS (Kamus Informasi KPI) ---
