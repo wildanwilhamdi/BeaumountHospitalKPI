@@ -63,12 +63,12 @@ for k, v in defaults.items():
 # Auto-logout setelah SESSION_TIMEOUT_MINUTES menit idle
 # ==========================================
 def check_session_timeout():
-    if st.session_state['logged_in'] and st.session_state['login_time']:
+    if st.session_state.get('logged_in') and st.session_state.get('login_time'):
         now     = datetime.now(timezone.utc)
         login   = st.session_state['login_time']
         elapsed = (now - login).total_seconds() / 60
         if elapsed > SESSION_TIMEOUT_MINUTES:
-            write_audit_log("SESSION_TIMEOUT", st.session_state['username'])
+            write_audit_log("SESSION_TIMEOUT", st.session_state.get('username', 'unknown'))
             logout(reason="timeout")
             return True
     return False
@@ -103,7 +103,9 @@ def delete_account(username: str):
     logout(reason="deleted")
 
 def logout(reason: str = "manual"):
-    write_audit_log("LOGOUT", st.session_state['username'], f"reason={reason}")
+    # Pakai .get() agar tidak crash jika key belum ada (race condition saat on_click callback)
+    username = st.session_state.get('username', 'unknown')
+    write_audit_log("LOGOUT", username, f"reason={reason}")
     st.session_state['logged_in']     = False
     st.session_state['username']      = ''
     st.session_state['login_time']    = None
@@ -176,7 +178,10 @@ if not st.session_state['logged_in']:
 - Account data is retained while your account is active
 - Audit logs are retained for 6 years (HIPAA requirement)
 - Upon account deletion, personal data is removed within 30 days
- """)
+
+**Data controller:** Beaumont Hospital, Beaumont Road, Dublin 9, Ireland  
+**Contact:** dpo@beaumont.ie
+                """)
 
             consent = st.checkbox(
                 "✅ I have read and agree to the Privacy Notice above.",
