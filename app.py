@@ -5,32 +5,10 @@ from pymongo import MongoClient
 from werkzeug.security import generate_password_hash, check_password_hash
 
 # ==========================================
-# LOGO SVG (inline, tidak butuh file gambar)
+# LOGO RESMI BEAUMONT HOSPITAL
+# Diambil langsung dari website beaumont.ie
 # ==========================================
-LOGO_SVG = """
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 60">
-  <!-- Background pill -->
-  <rect x="0" y="5" width="195" height="50" rx="10" fill="#0f2b3d"/>
-  <!-- Cross icon -->
-  <rect x="12" y="20" width="6" height="22" rx="2" fill="#20c997"/>
-  <rect x="6" y="26" width="18" height="6" rx="2" fill="#20c997"/>
-  <!-- Hospital name -->
-  <text x="38" y="27" font-family="Georgia, serif" font-size="13" font-weight="bold" fill="#ffffff">BEAUMONT</text>
-  <text x="38" y="44" font-family="Georgia, serif" font-size="10" fill="#20c997" letter-spacing="3">HOSPITAL</text>
-  <!-- Decorative line -->
-  <line x1="38" y1="30" x2="185" y2="30" stroke="#20c997" stroke-width="0.5" opacity="0.3"/>
-</svg>
-"""
-
-LOGO_SVG_SMALL = """
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 160 45">
-  <rect x="0" y="2" width="158" height="40" rx="8" fill="#0f2b3d"/>
-  <rect x="10" y="12" width="5" height="18" rx="1.5" fill="#20c997"/>
-  <rect x="5" y="17" width="15" height="5" rx="1.5" fill="#20c997"/>
-  <text x="28" y="21" font-family="Georgia, serif" font-size="11" font-weight="bold" fill="#ffffff">BEAUMONT</text>
-  <text x="28" y="35" font-family="Georgia, serif" font-size="8.5" fill="#20c997" letter-spacing="2.5">HOSPITAL</text>
-</svg>
-"""
+LOGO_URL = "https://www.beaumont.ie/themes/custom/beaumont_barrio/logo.png"
 
 # Konfigurasi Halaman Streamlit
 st.set_page_config(
@@ -80,20 +58,15 @@ def logout():
 if not st.session_state['logged_in']:
     col1, col2, col3 = st.columns([1, 2, 1])
     with col2:
-        # === LOGO DI LOGIN PAGE ===
-        st.markdown(
-            f"""
-            <div style="display:flex; justify-content:center; margin-bottom: 8px; margin-top: 20px;">
-                {LOGO_SVG}
-            </div>
-            """,
-            unsafe_allow_html=True
-        )
+        st.markdown("<br>", unsafe_allow_html=True)
 
-        # Alternatif: Jika kamu punya file gambar logo (taruh di folder 'assets/')
-        # st.image("assets/logo.png", use_column_width=True)
+        # === LOGO RESMI DI TENGAH HALAMAN LOGIN ===
+        logo_col1, logo_col2, logo_col3 = st.columns([1, 2, 1])
+        with logo_col2:
+            st.image(LOGO_URL, use_column_width=True)
 
-        st.markdown("<p style='text-align: center; color: gray; margin-top: 4px;'>Secure Executive Access Only. Please verify your identity.</p>", unsafe_allow_html=True)
+        st.markdown("<br>", unsafe_allow_html=True)
+        st.markdown("<p style='text-align: center; color: gray;'>Secure Executive Access Only. Please verify your identity.</p>", unsafe_allow_html=True)
         st.markdown("<br>", unsafe_allow_html=True)
 
         tab1, tab2 = st.tabs(["🔒 Login", "📝 Sign Up"])
@@ -129,21 +102,12 @@ if not st.session_state['logged_in']:
 # ==========================================
 else:
     # ==========================================
-    # SIDEBAR
+    # SIDEBAR DENGAN LOGO RESMI
     # ==========================================
 
     # === LOGO DI SIDEBAR ===
-    st.sidebar.markdown(
-        f"""
-        <div style="margin-bottom: 12px;">
-            {LOGO_SVG_SMALL}
-        </div>
-        """,
-        unsafe_allow_html=True
-    )
-
-    # Alternatif: Jika pakai file gambar
-    # st.sidebar.image("assets/logo.png", use_column_width=True)
+    st.sidebar.image(LOGO_URL, use_column_width=True)
+    st.sidebar.markdown("---")
 
     st.sidebar.markdown(f"### 👤 Welcome, **{st.session_state['username']}**")
     st.sidebar.button("🚪 Logout", on_click=logout, use_container_width=True)
@@ -206,24 +170,13 @@ else:
         </style>
     """, unsafe_allow_html=True)
 
-    # === HEADER DASHBOARD DENGAN LOGO ===
+    # === HEADER DENGAN LOGO RESMI DI POJOK KANAN ===
     header_col1, header_col2 = st.columns([3, 1])
     with header_col1:
         st.markdown("<h1 style='color: #20c997;'>Beaumont Hospital Executive Dashboard</h1>", unsafe_allow_html=True)
         st.markdown("This dashboard presents a detailed analysis of operational and clinical Key Performance Indicators (KPIs).")
     with header_col2:
-        # Logo di pojok kanan header
-        st.markdown(
-            f"""
-            <div style="display:flex; justify-content:flex-end; align-items:center; height:100%; padding-top:16px;">
-                {LOGO_SVG}
-            </div>
-            """,
-            unsafe_allow_html=True
-        )
-
-        # Alternatif: Jika pakai file gambar
-        # st.image("assets/logo.png", width=180)
+        st.image(LOGO_URL, width=200)
 
     st.markdown("### Controls")
     col_ctrl1, col_ctrl2 = st.columns([1, 1])
