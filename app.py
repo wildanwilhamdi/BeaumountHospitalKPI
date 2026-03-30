@@ -176,10 +176,7 @@ if not st.session_state['logged_in']:
 - Account data is retained while your account is active
 - Audit logs are retained for 6 years (HIPAA requirement)
 - Upon account deletion, personal data is removed within 30 days
-
-**Data controller:** Beaumont Hospital, Beaumont Road, Dublin 9, Ireland  
-**Contact:** dpo@beaumont.ie
-                """)
+ """)
 
             consent = st.checkbox(
                 "✅ I have read and agree to the Privacy Notice above.",
