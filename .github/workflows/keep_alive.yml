@@ -2,13 +2,12 @@ name: Keep Streamlit Alive
 
 on:
   schedule:
-    # Berjalan setiap jam (menit ke-0)
     - cron: '0 * * * *'
-  workflow_dispatch: # Bisa dijalankan manual jika mau tes
+  workflow_dispatch:
 
 jobs:
   ping:
     runs-on: ubuntu-latest
     steps:
       - name: Ping Streamlit App
-        run: curl -I -L https://beaumounthospitalkpi.streamlit.app/
+        run: curl -s -L https://beaumounthospitalkpi.streamlit.app/ > /dev/null
