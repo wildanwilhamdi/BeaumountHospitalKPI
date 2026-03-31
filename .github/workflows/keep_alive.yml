@@ -9,5 +9,5 @@ jobs:
   ping:
     runs-on: ubuntu-latest
     steps:
-      - name: Ping Streamlit App
-        run: curl -s -L https://beaumounthospitalkpi.streamlit.app/ > /dev/null
+      - name: Ping Streamlit Health Endpoint
+        run: curl -s https://beaumounthospitalkpi.streamlit.app/_stcore/health
