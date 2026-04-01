@@ -2,7 +2,8 @@ name: Keep Streamlit Alive
 
 on:
   schedule:
-    - cron: '0 * * * *'
+    # Mengubah jadwal menjadi setiap 15 menit
+    - cron: '*/15 * * * *'
   workflow_dispatch:
 
 jobs:
